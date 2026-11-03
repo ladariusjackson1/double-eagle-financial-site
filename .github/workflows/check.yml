@@ -1,0 +1,58 @@
+# One job: the Nu Html Checker, then lychee on the files Netlify serves
+# and on the copy the Pages workflow publishes.
+
+name: Check site
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate HTML and check links
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Java
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Install the Nu Html Checker
+        run: |
+          # Nu release 26.11.3 (93ef029). The "latest" asset is what the
+          # project publishes; the checksum rejects a different jar.
+          curl -fsSL -o /tmp/vnu.jar \
+            https://github.com/validator/validator/releases/download/latest/vnu.jar
+          echo "f1a68ef7831c61721caa1894d83a7dc21e6ef798fb8901f1feac769d5c609b9d  /tmp/vnu.jar" | sha256sum -c -
+          java -jar /tmp/vnu.jar --version
+
+      - name: Install lychee
+        run: |
+          case "$(uname -m)" in
+            x86_64) asset="lychee-x86_64-unknown-linux-gnu.tar.gz" ;;
+            aarch64) asset="lychee-aarch64-unknown-linux-gnu.tar.gz" ;;
+            *) echo "No lychee build for $(uname -m)" >&2; exit 1 ;;
+          esac
+          curl -fsSL -o /tmp/lychee.tar.gz \
+            "https://github.com/lycheeverse/lychee/releases/download/lychee-v0.24.2/${asset}"
+          tar -xzf /tmp/lychee.tar.gz -C /tmp
+          mkdir -p "$HOME/.local/bin"
+          install -m 755 /tmp/lychee-*/lychee "$HOME/.local/bin/lychee"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          "$HOME/.local/bin/lychee" --version
+
+      - name: Validate HTML and check links
+        env:
+          VNU_JAR: /tmp/vnu.jar
+          PAGES_BASE_PATH: /${{ github.event.repository.name }}
+        run: scripts/check_site.sh

@@ -669,3 +669,19 @@ table.compare tr:last-child th, table.compare tr:last-child td { border-bottom: 
 .starter > div { flex: 1 1 380px; max-width: 62ch; }
 .starter h3 { margin-top: .5rem; }
 .starter p:last-child { margin-bottom: 0; color: var(--muted); }
+
+/* Testimonials */
+.t-grid { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin-top: 1.75rem; margin-bottom: 0; }
+.t-card { display: flex; flex-direction: column; height: 100%; }
+.t-card h3 { font-size: var(--step-1); margin-bottom: .75rem; }
+.t-card blockquote { margin: 0; padding: 0; border: 0; flex: 1; }
+.t-card blockquote p { color: var(--ink); font-size: .97rem; line-height: 1.65; margin: 0; }
+.t-card .t-attr {
+  margin: 1rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+  color: var(--ink);
+  font-size: .92rem;
+  font-style: normal;
+  font-weight: 600;
+}

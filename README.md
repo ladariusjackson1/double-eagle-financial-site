@@ -8,7 +8,6 @@ The site is static. There is no framework, package install, or build step. The f
 
 ```
 index.html                 Home
-the-core-four.html         Monthly bookkeeping plans (Starter, Standard, Plus)
 pricing.html               Pricing
 about.html                 About
 faq.html                   FAQ

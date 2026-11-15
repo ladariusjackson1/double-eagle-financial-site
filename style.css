@@ -200,3 +200,44 @@ footer{padding-bottom:110px}
 #testimonials .t-card .t-attr{margin:auto 0 0;padding-top:12px;border-top:1px solid var(--line);font-size:13px;font-weight:700}
 [data-theme=dark] #testimonials .t-card{background:#1A242D}
 [data-theme=dark] #testimonials .t-card blockquote p{color:#d5d8dd}
+
+/* Inner pages (homepage chrome) — does not change #about */
+body.inner footer{padding-bottom:28px}
+.page-split{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:start}
+@media (max-width:900px){.page-split{grid-template-columns:1fr}}
+.field{margin:0 0 14px}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:620px){.field-row{grid-template-columns:1fr}}
+.field label{font-size:13px;font-weight:600;display:block;margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;padding:10px;border:1px solid #c4c9d0;border-radius:8px;font:14px inherit;font-family:inherit;background:#fff}
+.field textarea{resize:vertical;min-height:80px}
+.hint{font-weight:500;color:var(--mut)}
+.field-error{display:none;color:#b3261e;font-size:13px;font-weight:600;margin-top:4px}
+.has-error .field-error{display:block}
+.has-error input,.has-error select,.has-error textarea{border-color:#b3261e}
+.form-status{display:none;padding:10px 12px;border-radius:8px;margin-bottom:14px;font-size:14px}
+.form-status.is-visible{display:block}
+.form-status.is-error{background:#fdecea;color:#b3261e}
+.form-status.is-success{background:#e8f5e9;color:#0a7a2a}
+.honeypot{position:absolute;left:-9999px;height:0;overflow:hidden}
+.consent{display:flex;gap:8px;align-items:flex-start;font-weight:500;font-size:13px;margin:16px 0}
+.consent input{margin-top:3px;flex:none}
+.btn-note{font-size:13px;color:var(--mut);margin:8px 0 0}
+.prose h2{margin:28px 0 12px}
+.prose h3{margin:18px 0 8px;font-size:17px}
+.prose p,.prose li{font-size:15px}
+.prose ul{margin:0 0 16px;padding-left:1.2rem}
+.prose li{margin:0 0 8px}
+.updated{font-size:13px;color:var(--mut);margin-bottom:8px}
+.checklist{list-style:none;padding:0;margin:12px 0 0}
+.checklist li{background:var(--bg);border-radius:12px;padding:16px;margin:0 0 12px;font-size:14px}
+.checklist strong{display:block;margin-bottom:4px}
+.checklist span{color:var(--mut)}
+.faq-a[hidden]{display:none}
+.eyebrow-lite{display:inline-block;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--red);margin:0 0 8px}
+.table-hint{font-size:13px;color:var(--mut);margin-top:10px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+.compare-wrap{overflow-x:auto}
+[data-theme=dark] .field input,[data-theme=dark] .field select,[data-theme=dark] .field textarea{background:#0C1116;color:var(--ink);border-color:#3a3f47}
+[data-theme=dark] .form-status.is-error{background:#3a1816;color:#ff9a8f}
+[data-theme=dark] .checklist li,[data-theme=dark] .info{background:#121920}

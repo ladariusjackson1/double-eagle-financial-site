@@ -191,3 +191,12 @@ footer a{color:inherit}
 .fx-toast:empty{display:none}
 .sticky-cta .btn{flex-shrink:0}
 footer{padding-bottom:110px}
+
+#testimonials .t-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+#testimonials .t-card{border:1px solid var(--line);border-radius:12px;padding:18px;background:#fff;display:flex;flex-direction:column}
+#testimonials .t-card h3{margin:0 0 10px;font-size:18px}
+#testimonials .t-card blockquote{margin:0 0 12px;padding:0;border:0;flex:1}
+#testimonials .t-card blockquote p{margin:0;color:var(--mut);font-size:14px;line-height:1.65}
+#testimonials .t-card .t-attr{margin:auto 0 0;padding-top:12px;border-top:1px solid var(--line);font-size:13px;font-weight:700}
+[data-theme=dark] #testimonials .t-card{background:#1A242D}
+[data-theme=dark] #testimonials .t-card blockquote p{color:#d5d8dd}

@@ -47,6 +47,9 @@
 
   /* ---------- FAQ accordion ---------- */
   document.querySelectorAll(".faq-q").forEach(function (btn) {
+    var panel0 = document.getElementById(btn.getAttribute("aria-controls"));
+    // Homepage-style FAQs use the hidden attribute and are handled by ui.js
+    if (panel0 && panel0.hasAttribute("hidden")) return;
     btn.addEventListener("click", function () {
       var open = btn.getAttribute("aria-expanded") === "true";
       var panel = document.getElementById(btn.getAttribute("aria-controls"));

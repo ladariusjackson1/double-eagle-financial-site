@@ -19,7 +19,7 @@ function billHTML(t){
   return `<p><b>Double Eagle Financial LLC</b> · Olive Branch, MS 38654<br>Quote estimate · Start date ${t.date} · ${esc(t.customerName||'')} · ${t.industry} · Payment: ${t.payment}</p>
 <table><thead><tr><th>Service</th><th class="n">Qty</th><th class="n">Unit price</th><th class="n">Line subtotal</th><th class="n">Discount</th><th class="n">Net</th></tr></thead><tbody>
 ${t.lines.map(l=>`<tr><td>${l.name}</td><td class="n">${l.qty}</td><td class="n">${DEF.money(l.unitPrice)}</td><td class="n">${DEF.money(l.lineSubtotal)}</td><td class="n">${l.discount?'-'+DEF.money(l.discount)+' ('+(l.discountRate*100)+'%)':'None'}</td><td class="n">${DEF.money(l.net)}</td></tr>`).join('')}
-<tr><td colspan="5">Subtotal</td><td class="n">${DEF.money(t.subtotal)}</td></tr><tr><td colspan="5">Prepay discount</td><td class="n">-${DEF.money(t.discount)}</td></tr>
+<tr><td colspan="5">Subtotal</td><td class="n">${DEF.money(t.subtotal)}</td></tr><tr><td colspan="5">Discount</td><td class="n">-${DEF.money(t.discount)}</td></tr>
 <tr><td colspan="5">Net service revenue</td><td class="n">${DEF.money(t.netRevenue)}</td></tr><tr><td colspan="5">Sales tax (0%, MS professional services)</td><td class="n">${DEF.money(t.tax)}</td></tr>
 <tr><td colspan="5">Card processing fee (3% if card)</td><td class="n">${DEF.money(t.fee)}</td></tr><tr class="tot"><td colspan="5">ESTIMATED TOTAL</td><td class="n" id="billTotal">${DEF.money(t.total)}</td></tr></tbody></table>`;
 }

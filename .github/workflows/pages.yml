@@ -1,0 +1,59 @@
+# Backup host. Netlify still publishes the repository root when that
+# project is restored. This workflow publishes a second copy to GitHub
+# Pages and prefixes root-relative links so they work under the project
+# path. It does not change the files in the repository.
+
+name: GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Publish the backup site
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Read the Pages base path
+        id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Prepare the copy Pages will serve
+        env:
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          EXPECTED: /${{ github.event.repository.name }}
+        run: |
+          echo "Pages base path: '${BASE_PATH}'"
+          if [ "$BASE_PATH" != "$EXPECTED" ]; then
+            echo "This repository is a project site, so the base path should be ${EXPECTED}." >&2
+            echo "Any other path would publish links that do not match the URL GitHub serves." >&2
+            exit 1
+          fi
+          python3 scripts/prepare_pages.py --base-path "$BASE_PATH" --dest _site
+
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+          include-hidden-files: true
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

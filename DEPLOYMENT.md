@@ -1,10 +1,15 @@
 # Deployment
 
-The live site is [https://doubleeaglefinancial.com](https://doubleeaglefinancial.com). Netlify hosts it. Cloudflare provides DNS only. There is no build step and no package install. A push to `main` publishes the files in this repository.
+Two hosts:
 
-This repo does not use a GitHub Actions deploy. Netlify's own Git integration is already connected, and a second workflow would only publish the same files again.
+- **Netlify** is the primary host for [https://doubleeaglefinancial.com](https://doubleeaglefinancial.com). It publishes the files in this repository from `main`. There is no build step and no package install. Cloudflare provides DNS only.
+- **GitHub Pages** is the backup host, at [https://ladariusjackson1.github.io/double-eagle-financial-site/](https://ladariusjackson1.github.io/double-eagle-financial-site/). Use that address while Netlify is not serving the site.
 
-## How deploys work
+On 3 November 2026, `https://doubleeaglefinancial.com`, `https://www.doubleeaglefinancial.com`, and `https://doubleeaglefinancial.netlify.app` each returned Netlify's site-not-found page (HTTP 404). The Pages workflow publishes a working copy until that project is restored.
+
+GitHub does not hold a Netlify token. When the Netlify project is linked again, Netlify's own Git integration publishes `main`. The Pages workflow does not replace that.
+
+## How Netlify deploys work
 
 Netlify project: [doubleeaglefinancial](https://app.netlify.com/projects/doubleeaglefinancial)
 
@@ -14,14 +19,14 @@ Netlify project: [doubleeaglefinancial](https://app.netlify.com/projects/doublee
 - Build command: none
 - Pull requests: Netlify comments with a Deploy Preview at `https://deploy-preview-NUMBER--doubleeaglefinancial.netlify.app`
 
-That connection is already on. The `netlify[bot]` account commented on pull request #5 with a Deploy Preview for this project. GitHub has no Netlify workflow and no deploy secrets, because Netlify pulls the repo itself.
+That connection was in place: the `netlify[bot]` account commented on pull request #5 with a Deploy Preview for this project. GitHub has no Netlify workflow and no deploy secrets, because Netlify pulls the repo itself. The site-not-found response means the project is not publishing right now. The steps below are how to confirm the link, or put it back, once the Netlify project is available.
 
 ### Confirm it is still connected
 
 1. Open [Project configuration → Build & deploy](https://app.netlify.com/projects/doubleeaglefinancial/configuration/deploys).
 2. Under Continuous deployment, the repository should be `ladariusjackson1/double-eagle-financial-site` and the production branch should be `main`.
-3. The build command should be empty. The publish directory should be the repository root (`.` once `netlify.toml` is on `main`).
-4. Open a pull request. Within a few minutes, `netlify[bot]` should comment with a Deploy Preview link. Merging that pull request to `main` updates the live domain.
+3. The build command should be empty. The publish directory should be the repository root (`.`).
+4. Open a pull request. Within a few minutes, `netlify[bot]` should comment with a Deploy Preview link. Merging that pull request to `main` updates the live domain once the project is publishing again.
 
 ### Turn it back on if the link is ever removed
 
@@ -122,6 +127,29 @@ An empty `formEndpoint` (and no `data-endpoint`) does not pretend to send. The f
 
 ## GitHub Pages
 
-Do not enable GitHub Pages, and do not put back `.github/workflows/static.yml`. Pages publishes the site under a project path, and the root-relative links (`/assets/css/styles.css`, `/pricing.html`) 404 there. Netlify at the domain root is the only copy that should exist.
+The backup site is [https://ladariusjackson1.github.io/double-eagle-financial-site/](https://ladariusjackson1.github.io/double-eagle-financial-site/).
 
-GitHub Pages can still be switched on in the repository settings from an earlier setup, serving a stale snapshot at `https://ladariusjackson1.github.io/double-eagle-financial-site/`. Turn that off under **Settings → Pages → Build and deployment → None**. Deleting the workflow file does not flip that setting by itself.
+[`.github/workflows/pages.yml`](.github/workflows/pages.yml) runs on every push to `main`. It checks out the repository, runs `scripts/prepare_pages.py`, and deploys that copy with the official GitHub Pages actions. It stops if GitHub reports a base path other than the repository name (`/double-eagle-financial-site`), so it cannot publish the old broken copy by accident. Repository settings already use GitHub Actions as the Pages source. If that is ever switched off, set **Settings → Pages → Build and deployment → Source** to **GitHub Actions**. The workflow does not create a second Netlify site and does not use a Netlify token.
+
+### Why the copy is rewritten
+
+The HTML links to `/pricing.html` and `/assets/css/styles.css`. On Netlify those resolve, because the site is the whole domain. GitHub Pages serves this project at `/double-eagle-financial-site/`, so the same paths would request `https://ladariusjackson1.github.io/pricing.html` and 404. An earlier workflow uploaded the repository unchanged and produced that broken copy. It was removed for that reason.
+
+`scripts/prepare_pages.py` prefixes those root-relative URLs in the copy it writes, and it points the Open Graph image at that copy so the card still loads while the production host is down. Canonical URLs stay on `https://www.doubleeaglefinancial.com`. The script refuses to finish if the visible text differs from the source files. Netlify keeps publishing the untouched repository.
+
+Do not add a `CNAME` file for `doubleeaglefinancial.com`. That would make Pages claim the domain Netlify uses.
+
+Pages does not apply `netlify.toml`. The backup does not send the security headers described above. It is there so the pages can be opened, not as a second hardened host.
+
+`robots.txt` and `sitemap.xml` are copied unchanged, so they still name the production domain.
+
+To look at the same copy locally:
+
+```bash
+python3 scripts/prepare_pages.py \
+  --base-path /double-eagle-financial-site \
+  --dest /tmp/pages-preview/double-eagle-financial-site
+python3 -m http.server 8080 --directory /tmp/pages-preview
+```
+
+Open `http://127.0.0.1:8080/double-eagle-financial-site/`. Styles and page links should load. `http://127.0.0.1:8080/assets/css/styles.css` should 404, which is the failure the prefix prevents.

@@ -2,3 +2,5 @@
 .netlify/
 node_modules/
 .env
+_site/
+__pycache__/
